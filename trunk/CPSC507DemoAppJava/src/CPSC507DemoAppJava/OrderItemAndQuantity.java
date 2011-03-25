@@ -1,11 +1,12 @@
 package CPSC507DemoAppJava;
 
-public class OrderLineItem {
+public class OrderItemAndQuantity {
     private int quantity;
     private OrderItem item;
     
-    public OrderLineItem(OrderItem item) {
+    public OrderItemAndQuantity(OrderItem item, int quantity) {
         this.item = item;
+        this.quantity = quantity;
     }
     
     public int getQuantity() {

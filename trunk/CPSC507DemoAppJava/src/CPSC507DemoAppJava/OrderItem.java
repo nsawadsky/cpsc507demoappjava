@@ -1,23 +1,19 @@
 package CPSC507DemoAppJava;
 
 public class OrderItem {
-    private int id;
+    private String id;
     private ItemCategory category;
     private String description;
+    private double price;
     
-    public enum ItemCategory {
-        Book,
-        Electronics,
-        Apparel
-    };
-    
-    public OrderItem(int id, ItemCategory category, String description) {
+    public OrderItem(String id, ItemCategory category, String description, double price) {
         this.id = id;
         this.category = category;
         this.description = description;
+        this.price = price;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
     
@@ -25,8 +21,12 @@ public class OrderItem {
         return category;
     }
 
-    public String getItemDescription() {
+    public String getDescription() {
         return description;
+    }
+    
+    public double getPrice() {
+        return price;
     }
 
 }
