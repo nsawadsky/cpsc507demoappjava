@@ -1,53 +1,73 @@
 package CPSC507DemoAppJava;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class Order {
-    private Map<String, OrderItemAndQuantity> lineItems = new HashMap<String, OrderItemAndQuantity>();
+    private List<OrderItemAndQuantity> lineItems;
     private Date creationTime;
 
-    public Order(Date creationTime) {
+    public Order(Date creationTime, OrderItemAndQuantity[] lineItems) {
         this.creationTime = creationTime;
+        this.lineItems = Arrays.asList(lineItems);
     }
+    
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result
+                + ((creationTime == null) ? 0 : creationTime.hashCode());
+        result = prime * result
+                + ((lineItems == null) ? 0 : lineItems.hashCode());
+        return result;
+    }
+    
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Order other = (Order) obj;
+        if (creationTime == null) {
+            if (other.creationTime != null)
+                return false;
+        } else if (!creationTime.equals(other.creationTime))
+            return false;
+        if (lineItems == null) {
+            if (other.lineItems != null)
+                return false;
+        } else if (!lineItems.equals(other.lineItems))
+            return false;
+        return true;
+    }
+    
     public Date getCreationTime() {
         return creationTime;
     }
     
-    public void addItems(OrderItem item, int quantity) {
-        OrderItemAndQuantity lineItem = lineItems.get(item.getId());
-        if (lineItem == null) {
-            lineItem = new OrderItemAndQuantity(item, quantity);
-            lineItems.put(item.getId(), lineItem);
-        } else {
-            lineItem.setQuantity(lineItem.getQuantity() + quantity);
-        }
+    public List<OrderItemAndQuantity> getLineItems() {
+        return lineItems;
     }
     
-    public void removeItems(OrderItem item, int quantity) {
-        OrderItemAndQuantity lineItem = lineItems.get(item.getId());
-        if (lineItem != null) {
-            if (lineItem.getQuantity() > quantity) {
-                lineItem.setQuantity(lineItem.getQuantity() - quantity);
-            } else {
-                lineItems.remove(item.getId());
-            }
-        }
-    }
-
-    public CostAndApplicablePromotions calculateCost(List<Promotion> promotionList, 
+    public CostAndApplicablePromotions calculateCost(Promotion[] promotions, 
             int allowablePromotions) {
+        if (allowablePromotions < 0) {
+            throw new IllegalArgumentException("allowablePromotions < 0");
+        }
         double totalCost = calculateCostBeforePromotions();
         
         List<PromotionSavings> promoSavingsList = new ArrayList<PromotionSavings>();
         
         if (allowablePromotions > 0) {
-            promoSavingsList = calculateAllPromotionSavings(promotionList);
+            promoSavingsList = calculateAllPromotionSavings(promotions);
             
             if (promoSavingsList.size() > allowablePromotions) {
                 // Sort the savings list in descending order according to savings value.
@@ -67,26 +87,29 @@ public class Order {
             }
             
         }
-        return new CostAndApplicablePromotions(totalCost, promoSavingsList);
+        return new CostAndApplicablePromotions(totalCost, promoSavingsList.toArray(new PromotionSavings[0]));
     }
     
-    private List<PromotionSavings> calculateAllPromotionSavings(List<Promotion> promotionList) {
+    private List<PromotionSavings> calculateAllPromotionSavings(Promotion[] promotions) {
         List<PromotionSavings> result = new ArrayList<PromotionSavings>();
-        for (Promotion promo: promotionList) {
-            result.add(calculatePromotionSavings(promo));
+        for (Promotion promo: promotions) {
+            PromotionSavings savings = calculatePromotionSavings(promo);
+            if (savings != null) {
+                result.add(savings);
+            }
         }
         return result;
     }
     
     private PromotionSavings calculatePromotionSavings(Promotion promotion) {
-        if (creationTime.after(promotion.getStartTime()) && 
-                creationTime.before(promotion.getEndTime())) {
-            for (OrderItemAndQuantity lineItem: lineItems.values()) {
+        if (creationTime.compareTo(promotion.getStartTime()) >= 0 && 
+                creationTime.compareTo(promotion.getEndTime()) <= 0) {
+            for (OrderItemAndQuantity lineItem: lineItems) {
                 OrderItem orderItem = lineItem.getItem();
                 if (orderItem.getCategory().equals(promotion.getCategory())) {
                     boolean descriptionMatch = false;
                     if (promotion.getDescriptionKeywords() == null || 
-                            promotion.getDescriptionKeywords().isEmpty()) {
+                            promotion.getDescriptionKeywords().length == 0) {
                         descriptionMatch = true;
                     } else {
                         for (String keyword: promotion.getDescriptionKeywords()) {
@@ -108,7 +131,7 @@ public class Order {
     
     private double calculateCostBeforePromotions() {
         double result = 0.0;
-        for (OrderItemAndQuantity lineItem: lineItems.values()){
+        for (OrderItemAndQuantity lineItem: lineItems){
             result += lineItem.getQuantity() * lineItem.getItem().getPrice();
         }
         return result;
