@@ -1,50 +1,50 @@
 package CPSC507DemoAppJava;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
-import java.util.Random;
 
 public class TestInputGenerator {
-    private static Random random = new Random();
-    
-    public static ItemCategory createBookCategory() {
+    @Override
+    public boolean equals(Object target) {
+        return target != null && target.getClass() == this.getClass();
+    }
+
+    @Override
+    public int hashCode() {
+        return 31;
+    }
+
+    public ItemCategory createBookCategory() {
         return ItemCategory.Book;
     }
     
-    public static ItemCategory createApparelCategory() {
+    public ItemCategory createApparelCategory() {
         return ItemCategory.Apparel;
     }
     
-    public static ItemCategory createElectronicsCategory() {
+    public ItemCategory createElectronicsCategory() {
         return ItemCategory.Electronics;
     }
-    
-    public static Date createRandomDate() {
-        return new Date(random.nextLong());
+
+    public Date createDate(long date) {
+        return new Date(date);
     }
     
-    public List<String> createStringList(String[] input) {
-        List<String> result = new ArrayList<String>();
-        for (String str: input) {
-            result.add(str);
-        }
-        return result;
+    public Promotion createPromotion(String id, ItemCategory category, String[] descriptionKeywords,
+            Date startTime, Date endTime, double discount) {
+        return new Promotion(id, category, descriptionKeywords, startTime, endTime, discount);
     }
     
-    public List<Promotion> createPromotionList(Promotion[] input) {
-        List<Promotion> result = new ArrayList<Promotion>();
-        for (Promotion promo: input) {
-            result.add(promo);
-        }
-        return result;
+    public OrderItem createOrderItem(String id, ItemCategory category, String description, double price) {
+        return new OrderItem(id, category, description, price);
     }
     
-    public List<PromotionSavings> createPromotionSavingsList(PromotionSavings[] input) {
-        List<PromotionSavings> result = new ArrayList<PromotionSavings>();
-        for (PromotionSavings promo: input) {
-            result.add(promo);
-        }
-        return result;
+    public OrderItemAndQuantity createOrderItemAndQuantity(OrderItem item, int quantity) {
+        return new OrderItemAndQuantity(item, quantity);
     }
+    
+    public Order createOrder(Date creationTime, OrderItemAndQuantity[] orderItems) {
+        Order order = new Order(creationTime, orderItems);
+        return order;
+    }
+    
 }
