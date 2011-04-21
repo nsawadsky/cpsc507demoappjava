@@ -1,19 +1,17 @@
 package CPSC507DemoAppJava;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
 public class Order {
-    private List<OrderItemAndQuantity> lineItems;
+    private List<OrderItemAndQuantity> lineItems = new ArrayList<OrderItemAndQuantity>();
     private Date creationTime;
 
-    public Order(Date creationTime, OrderItemAndQuantity[] lineItems) {
+    public Order(Date creationTime) {
         this.creationTime = creationTime;
-        this.lineItems = Arrays.asList(lineItems);
     }
     
     @Override
@@ -57,6 +55,15 @@ public class Order {
         return lineItems;
     }
     
+    public void addItems(OrderItem item, int quantity)
+    {
+        if (quantity < 0)
+        {
+            throw new IllegalArgumentException("quantity < 0");
+        }
+        lineItems.add(new OrderItemAndQuantity(item, quantity));
+    }
+
     public CostAndApplicablePromotions calculateCost(Promotion[] promotions, 
             int allowablePromotions) {
         if (allowablePromotions < 0) {

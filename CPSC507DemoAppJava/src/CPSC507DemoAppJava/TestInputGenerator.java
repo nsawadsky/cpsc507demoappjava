@@ -38,13 +38,13 @@ public class TestInputGenerator {
         return new OrderItem(id, category, description, price);
     }
     
-    public OrderItemAndQuantity createOrderItemAndQuantity(OrderItem item, int quantity) {
-        return new OrderItemAndQuantity(item, quantity);
+    public Order createOrder(Date creationTime) {
+        Order order = new Order(creationTime);
+        return order;
     }
     
-    public Order createOrder(Date creationTime, OrderItemAndQuantity[] orderItems) {
-        Order order = new Order(creationTime, orderItems);
-        return order;
+    public void addItemsToOrder(Order order, OrderItem item, int quantity) {
+        order.addItems(item, quantity);
     }
     
 }
