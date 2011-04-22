@@ -97,10 +97,9 @@ public class TestDriver {
                         }
                         else
                         {
-                            for (String keyword: promo.getDescriptionKeywords())
-                            {
-                                if (itemAndQuantity.getItem().getDescription().contains(keyword))
-                                {
+                            List<String> tokens = Arrays.asList(itemAndQuantity.getItem().getDescription().split(" "));
+                            for (String keyword: promo.getDescriptionKeywords()) {
+                                if (tokens.contains(keyword)) {
                                     descriptionKeywordMatch = true;
                                     break;
                                 }
