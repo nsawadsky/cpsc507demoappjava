@@ -1,6 +1,7 @@
 package CPSC507DemoAppJava;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -119,9 +120,11 @@ public class Order {
                             promotion.getDescriptionKeywords().length == 0) {
                         descriptionMatch = true;
                     } else {
+                        List<String> tokens = Arrays.asList(orderItem.getDescription().split(" "));
                         for (String keyword: promotion.getDescriptionKeywords()) {
-                            if (orderItem.getDescription().contains(keyword)) {
+                            if (tokens.contains(keyword)) {
                                 descriptionMatch = true;
+                                break;
                             }
                         }
                     }
